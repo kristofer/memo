@@ -1,0 +1,10 @@
+---
+title: First Note
+created: 2025-06-18T16:46:45.100499-04:00
+modified: 2025-06-18T16:46:45.101096-04:00
+tags:
+    - foo
+    - bar
+---
+
+this is a first note. How do I end it? just with a `return`?

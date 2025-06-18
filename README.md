@@ -1,8 +1,10 @@
-# future-proof
+# Memo - a future-proof Personal Notes Manager
 
-# Build a Personal Notes Manager
+Written in Go, as an example. 
+
 
 A multi-phase educational project for managing personal notes with structured metadata.
+
 
 ## Overview
 
