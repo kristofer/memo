@@ -2,9 +2,7 @@
 
 Written in Go, as an example. 
 
-
 A multi-phase educational project for managing personal notes with structured metadata.
-
 
 ## Overview
 

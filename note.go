@@ -46,7 +46,7 @@ func parseNote(filePath string) (*Note, error) {
 	}
 
 	contentStr := string(content)
-	
+
 	// Check if file starts with YAML front matter
 	if !strings.HasPrefix(contentStr, "---\n") {
 		return nil, fmt.Errorf("note file must start with YAML front matter")
@@ -141,7 +141,7 @@ func searchNotes(query string) ([]*Note, error) {
 
 	var matches []*Note
 	queryLower := strings.ToLower(query)
-	
+
 	for _, note := range notes {
 		// Search in title, content, and tags
 		if strings.Contains(strings.ToLower(note.Metadata.Title), queryLower) ||
@@ -149,7 +149,7 @@ func searchNotes(query string) ([]*Note, error) {
 			matches = append(matches, note)
 			continue
 		}
-		
+
 		// Search in tags
 		for _, tag := range note.Metadata.Tags {
 			if strings.Contains(strings.ToLower(tag), queryLower) {
@@ -170,7 +170,7 @@ func filterNotesByTag(tag string) ([]*Note, error) {
 
 	var matches []*Note
 	tagLower := strings.ToLower(tag)
-	
+
 	for _, note := range notes {
 		for _, noteTag := range note.Metadata.Tags {
 			if strings.ToLower(noteTag) == tagLower {
