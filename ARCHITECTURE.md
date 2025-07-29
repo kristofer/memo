@@ -42,8 +42,8 @@ graph TB
     HC --> UI
     
     %% Domain Layer
-    Storage --> Note[internal/note<br/>Domain Models]
-    UI --> Note
+    Storage --> NotePackage[internal/note<br/>Domain Models]
+    UI --> NotePackage
     
     %% External Dependencies
     Storage --> FS[File System<br/>.memo-notes/]
@@ -60,7 +60,7 @@ graph TB
     class Main entryPoint
     class App,CR,CC,LC,RC,EC,DC,SC,STC,HC,CTX cmdLayer
     class Storage,UI internal
-    class Note domain
+    class NotePackage domain
     class FS,Console,YAML external
 ```
 
@@ -81,7 +81,7 @@ graph LR
     
     subgraph "Internal Packages (internal/)"
         subgraph "Domain (note/)"
-            N[Note]
+            NoteModel[Note]
             NM[Metadata]
         end
         
@@ -107,11 +107,11 @@ graph LR
     CC --> CTX
     CTX --> FS
     CC --> UI
-    FS --> N
-    UI --> N
+    FS --> NoteModel
+    UI --> NoteModel
     FS --> FileSystem
     UI --> Console
-    N --> YAML
+    NoteModel --> YAML
 ```
 
 ## Dependency Flow
@@ -257,7 +257,7 @@ sequenceDiagram
     participant App
     participant Command
     participant Storage
-    participant Note
+    participant NoteModel as Note
     participant FileSystem
     
     User->>CLI: memo create
@@ -265,11 +265,11 @@ sequenceDiagram
     App->>App: Parse command line
     App->>Command: CreateCommand.Execute()
     Command->>Command: Prompt for input
-    Command->>Note: New(title, content, tags)
-    Note-->>Command: *Note
+    Command->>NoteModel: New(title, content, tags)
+    NoteModel-->>Command: *Note
     Command->>Storage: SaveNote(note)
-    Storage->>Note: ToFileContent()
-    Note-->>Storage: YAML + content
+    Storage->>NoteModel: ToFileContent()
+    NoteModel-->>Storage: YAML + content
     Storage->>FileSystem: WriteFile()
     FileSystem-->>Storage: success
     Storage-->>Command: nil
