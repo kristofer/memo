@@ -1,6 +1,6 @@
 # Memo Application Architecture
 
-This document outlines the architectural structure of the Memo CLI application after refactoring to implement clean separation of concerns and the Command Pattern.
+This document outlines the architectural structure of the Memo CLI application (a version of Future-Proof-Notes) after refactoring to implement clean separation of concerns and the Command Pattern.
 
 ## Overall Architecture
 
