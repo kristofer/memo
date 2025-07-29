@@ -4,7 +4,7 @@ A step-by-step guide for building a Personal Notes Manager that starts simple an
 
 **Target Audience:** Beginning programmers learning file I/O, data structures, and application architecture  
 **Languages:** Java, Python, Go, or similar  
-**Storage:** Plain text files with YAML headers (future-proof!)
+**Storage:** Plain text files with YAML headers (future-proof!)  
 **Phase 1** This is just focused on what you need to do to thru Phase 1 in the README.md file
 
 ## Overview
