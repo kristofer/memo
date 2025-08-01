@@ -8,7 +8,7 @@ A multi-phase educational project for managing personal notes with structured me
 
 In my Go veresion, I've created a `mermaid` document with diagrams. https://github.com/kristofer/memo/blob/main/ARCHITECTURE.md
 
- > Original Readme
+ > Original Readme below
 
 # future-proof
 
