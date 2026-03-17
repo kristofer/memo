@@ -33,7 +33,7 @@ func PrintHelp() {
 	fmt.Println("  memo --help                     Display this help information")
 	fmt.Println("")
 	fmt.Println("Note: After running 'memo list', you can use numbers 1-N to reference notes")
-	fmt.Println("      instead of the full note ID (e.g., 'memo read 3' or 'memo edit 5')")
+	fmt.Println("      in any subsequent command (e.g., 'memo read 3' or 'memo delete 2').")
 }
 
 func DisplayNotesWithPagination(notes []*note.Note) {
@@ -81,7 +81,7 @@ func DisplayNotesWithPagination(notes []*note.Note) {
 		startIndex = endIndex
 	}
 
-	fmt.Println("\nTip: Use 'memo read <number>' or 'memo edit <number>' with numbers 1-" + strconv.Itoa(len(notes)) + " from this listing.")
+	fmt.Println("\nTip: Numbers 1-" + strconv.Itoa(len(notes)) + " stay valid until the next 'memo list' (e.g., 'memo read 3', 'memo delete 2').")
 }
 
 func DisplayNote(n *note.Note) {

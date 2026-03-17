@@ -2,8 +2,11 @@ package cmd
 
 import (
 	"fmt"
+	"path/filepath"
+	"strings"
 
 	"memo/internal/note"
+	"memo/internal/storage"
 	"memo/internal/ui"
 )
 
@@ -47,6 +50,16 @@ func (c *ListCommand) Execute(args []string) error {
 
 	// Update current listing for number-based access
 	c.ctx.SetCurrentListing(notes)
+
+	// Persist the listing so numbers remain valid in subsequent commands.
+	noteIDs := make([]string, len(notes))
+	for i, n := range notes {
+		noteIDs[i] = strings.TrimSuffix(filepath.Base(n.FilePath), storage.DefaultNoteExtension)
+	}
+	if err := c.ctx.Storage.SaveLastListing(noteIDs); err != nil {
+		fmt.Printf("Warning: failed to save listing for number-based access: %v\n", err)
+	}
+
 	ui.DisplayNotesWithPagination(notes)
 	
 	return nil

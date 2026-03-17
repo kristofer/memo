@@ -33,17 +33,29 @@ func (ctx *CommandContext) GetCurrentListing() []*note.Note {
 
 // ResolveNoteID converts a numeric list position or a literal note ID string
 // into a canonical note ID (the filename without its extension).
-// Numeric positions require a prior call to the list command to populate CurrentListing.
+// Numeric positions are first looked up in the in-memory CurrentListing (populated
+// by the list command in the same invocation) and then in the persisted last
+// listing on disk, so numbers like "1" or "3" remain valid across invocations
+// until the next `memo list` is run.
 func (ctx *CommandContext) ResolveNoteID(identifier string) (string, error) {
 	if num, err := strconv.Atoi(identifier); err == nil {
-		if len(ctx.CurrentListing) == 0 {
+		if len(ctx.CurrentListing) > 0 {
+			if num < 1 || num > len(ctx.CurrentListing) {
+				return "", fmt.Errorf("number %d is out of range. Valid range: 1-%d", num, len(ctx.CurrentListing))
+			}
+			n := ctx.CurrentListing[num-1]
+			return strings.TrimSuffix(filepath.Base(n.FilePath), storage.DefaultNoteExtension), nil
+		}
+
+		// Fall back to the listing persisted by the last `memo list` invocation.
+		noteIDs, loadErr := ctx.Storage.LoadLastListing()
+		if loadErr != nil || len(noteIDs) == 0 {
 			return "", fmt.Errorf("no current note listing. Please run 'memo list' first")
 		}
-		if num < 1 || num > len(ctx.CurrentListing) {
-			return "", fmt.Errorf("number %d is out of range. Valid range: 1-%d", num, len(ctx.CurrentListing))
+		if num < 1 || num > len(noteIDs) {
+			return "", fmt.Errorf("number %d is out of range. Valid range: 1-%d", num, len(noteIDs))
 		}
-		n := ctx.CurrentListing[num-1]
-		return strings.TrimSuffix(filepath.Base(n.FilePath), storage.DefaultNoteExtension), nil
+		return noteIDs[num-1], nil
 	}
 	return identifier, nil
 }

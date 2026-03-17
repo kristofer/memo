@@ -12,8 +12,9 @@ import (
 )
 
 const (
-	DefaultNotesDirName  = ".memo-notes"
-	DefaultNoteExtension = ".note"
+	DefaultNotesDirName   = ".memo-notes"
+	DefaultNoteExtension  = ".note"
+	LastListingFileName   = ".last-listing"
 )
 
 type FileStorage struct {
@@ -168,6 +169,38 @@ func (fs *FileStorage) SearchNotes(query string) ([]*note.Note, error) {
 	}
 
 	return matches, nil
+}
+
+// SaveLastListing writes the ordered list of note IDs to a file so that
+// numeric positions from `memo list` can be resolved in subsequent commands.
+func (fs *FileStorage) SaveLastListing(noteIDs []string) error {
+	if err := fs.EnsureNotesDir(); err != nil {
+		return fmt.Errorf("error ensuring notes directory: %w", err)
+	}
+	listingPath := filepath.Join(fs.notesDir, LastListingFileName)
+	return os.WriteFile(listingPath, []byte(strings.Join(noteIDs, "\n")), 0644)
+}
+
+// LoadLastListing reads the persisted listing produced by the last `memo list`
+// and returns the ordered note IDs. Returns nil (no error) when no listing
+// has been saved yet.
+func (fs *FileStorage) LoadLastListing() ([]string, error) {
+	listingPath := filepath.Join(fs.notesDir, LastListingFileName)
+	data, err := os.ReadFile(listingPath)
+	if os.IsNotExist(err) {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, fmt.Errorf("error reading last listing: %w", err)
+	}
+	var ids []string
+	for _, line := range strings.Split(string(data), "\n") {
+		line = strings.TrimSpace(line)
+		if line != "" {
+			ids = append(ids, line)
+		}
+	}
+	return ids, nil
 }
 
 func (fs *FileStorage) FilterNotesByTag(tag string) ([]*note.Note, error) {
