@@ -2,8 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"path/filepath"
-	"strconv"
 	"strings"
 
 	"memo/internal/ui"
@@ -22,8 +20,7 @@ func (c *EditCommand) Execute(args []string) error {
 		return fmt.Errorf("note-id or number required\nUsage: memo edit <note-id|number>")
 	}
 
-	identifier := args[0]
-	noteID, err := c.resolveNoteID(identifier)
+	noteID, err := c.ctx.ResolveNoteID(args[0])
 	if err != nil {
 		return err
 	}
@@ -59,21 +56,4 @@ func (c *EditCommand) Execute(args []string) error {
 
 	fmt.Println("Note updated successfully!")
 	return nil
-}
-
-func (c *EditCommand) resolveNoteID(identifier string) (string, error) {
-	if num, err := strconv.Atoi(identifier); err == nil {
-		if c.ctx.CurrentListing == nil || len(c.ctx.CurrentListing) == 0 {
-			return "", fmt.Errorf("no current note listing. Please run 'memo list' first")
-		}
-
-		if num < 1 || num > len(c.ctx.CurrentListing) {
-			return "", fmt.Errorf("number %d is out of range. Valid range: 1-%d", num, len(c.ctx.CurrentListing))
-		}
-
-		n := c.ctx.CurrentListing[num-1]
-		return strings.TrimSuffix(filepath.Base(n.FilePath), ".note"), nil
-	}
-
-	return identifier, nil
 }
