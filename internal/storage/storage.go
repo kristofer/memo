@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	DefaultNotesDir      = ".memo-notes"
+	DefaultNotesDirName  = ".memo-notes"
 	DefaultNoteExtension = ".note"
 )
 
@@ -21,9 +21,18 @@ type FileStorage struct {
 	noteExtension string
 }
 
+// DefaultNotesDir returns the default notes directory path in the user's HOME directory.
+func DefaultNotesDir() string {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return DefaultNotesDirName
+	}
+	return filepath.Join(home, DefaultNotesDirName)
+}
+
 func NewFileStorage() *FileStorage {
 	return &FileStorage{
-		notesDir:      DefaultNotesDir,
+		notesDir:      DefaultNotesDir(),
 		noteExtension: DefaultNoteExtension,
 	}
 }
@@ -42,8 +51,10 @@ func (fs *FileStorage) EnsureNotesDir() error {
 	return nil
 }
 
+// GenerateNoteID returns a date-and-time-based unique note identifier.
+// Format: YYYYMMDD-HHMMSS-mmm, e.g. "20260317-193750-042".
 func (fs *FileStorage) GenerateNoteID() string {
-	return fmt.Sprintf("note_%d", time.Now().Unix())
+	return time.Now().Format("20060102-150405-000")
 }
 
 func (fs *FileStorage) GenerateNoteFilePath(noteID string) string {
