@@ -213,6 +213,67 @@ func TestFilterNotesByTag(t *testing.T) {
 	}
 }
 
+func TestSaveAndLoadLastListing(t *testing.T) {
+	fs := newTestStorage(t)
+
+	ids := []string{"20260317-193750-001", "20260317-193750-002", "20260317-193750-003"}
+	if err := fs.SaveLastListing(ids); err != nil {
+		t.Fatalf("SaveLastListing returned error: %v", err)
+	}
+
+	loaded, err := fs.LoadLastListing()
+	if err != nil {
+		t.Fatalf("LoadLastListing returned error: %v", err)
+	}
+	if len(loaded) != len(ids) {
+		t.Fatalf("expected %d IDs, got %d", len(ids), len(loaded))
+	}
+	for i, id := range ids {
+		if loaded[i] != id {
+			t.Errorf("position %d: expected %q, got %q", i+1, id, loaded[i])
+		}
+	}
+}
+
+func TestLoadLastListing_NoFile(t *testing.T) {
+	fs := newTestStorage(t)
+
+	ids, err := fs.LoadLastListing()
+	if err != nil {
+		t.Fatalf("LoadLastListing should not error when no listing file exists, got: %v", err)
+	}
+	if ids != nil {
+		t.Errorf("expected nil when no listing file exists, got %v", ids)
+	}
+}
+
+func TestSaveLastListing_Overwrites(t *testing.T) {
+	fs := newTestStorage(t)
+
+	first := []string{"id-a", "id-b", "id-c"}
+	if err := fs.SaveLastListing(first); err != nil {
+		t.Fatal(err)
+	}
+
+	second := []string{"id-x", "id-y"}
+	if err := fs.SaveLastListing(second); err != nil {
+		t.Fatal(err)
+	}
+
+	loaded, err := fs.LoadLastListing()
+	if err != nil {
+		t.Fatalf("LoadLastListing returned error: %v", err)
+	}
+	if len(loaded) != len(second) {
+		t.Fatalf("expected %d IDs after overwrite, got %d", len(second), len(loaded))
+	}
+	for i, id := range second {
+		if loaded[i] != id {
+			t.Errorf("position %d: expected %q, got %q", i+1, id, loaded[i])
+		}
+	}
+}
+
 func TestDefaultNotesDir(t *testing.T) {
 	dir := DefaultNotesDir()
 	if dir == "" {
